@@ -31,11 +31,16 @@ jobs:
         run: npm ci
 
       - name: 📱 Generate Native Android Project
-        run: npx expo prebuild --platform android --clean
+        run: npx expo prebuild --platform android --clean --no-install
 
-      - name: 🔨 Build Release APK via Gradle
+      - name: ⚙️ Configure Memory & Build Release APK
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx4096m -XX:MaxMetaspaceSize=1536m' -Dorg.gradle.daemon=false"
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1536m -XX:+HeapDumpOnOutOfMemoryError" >> gradle.properties
+          echo "kotlin.daemon.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=1024m" >> gradle.properties
+          ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=1536m"
 
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
