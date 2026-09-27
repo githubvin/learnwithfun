@@ -11,6 +11,7 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true
     },
@@ -18,7 +19,7 @@
       "package": "com.githubvin.learnwithfun",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#faf8f5"
       }
     },
     "web": {
@@ -27,11 +28,14 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#faf8f5"
     },
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "b3633e29-015f-499c-aa3f-bf190e86611d"
       }
     },
     "plugins": [
