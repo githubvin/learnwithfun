@@ -4,17 +4,18 @@ An educational mobile app for kids to learn fundamentals with fun and playful me
 
 ## Documentation
 
-- [Project Planning Document (MVP1)](file:///E:/AgentWS/learnwithfun/docs/PROJECT_PLAN.md) — Comprehensive PRD, Grade 2 curriculum roadmap, 5-tier level progression, 16 badges catalog, and milestones.
-- [Detailed Technical Design Document (TDD)](file:///E:/AgentWS/learnwithfun/docs/SYSTEM_DESIGN.md) — System architecture, TypeScript domain models, progression & badge evaluation engines, offline-first sync, and UI/UX design tokens.
-- [Formal Curriculum Specification](file:///E:/AgentWS/learnwithfun/docs/CURRICULUM_SPECIFICATION.md) — Pedagogical framework, 50 complete Grade 2 lessons (25 Maths & 25 Science), vocabulary, and sample challenge items.
-- [Gamification & Badges Specification](file:///E:/AgentWS/learnwithfun/docs/GAMIFICATION_AND_BADGES.md) — XP economy, 3-star rating mechanics, 5 progression levels, 10 module unlock gates, 16 badges catalog, and celebratory feedback.
+- [Build & Installation Guide (APK & Tech Stack)](./docs/BUILD_AND_INSTALL_GUIDE.md) — Step-by-step instructions on generating the standalone APK, installing on Android phones, sharing with friends, and full tech stack details.
+- [Project Planning Document (MVP1)](./docs/PROJECT_PLAN.md) — Comprehensive PRD, Grade 2 curriculum roadmap, 5-tier level progression, 16 badges catalog, and milestones.
+- [Detailed Technical Design Document (TDD)](./docs/SYSTEM_DESIGN.md) — System architecture, TypeScript domain models, progression & badge evaluation engines, offline-first sync, and UI/UX design tokens.
+- [Formal Curriculum Specification](./docs/CURRICULUM_SPECIFICATION.md) — Pedagogical framework, 50 complete Grade 2 lessons (25 Maths & 25 Science), vocabulary, and sample challenge items.
+- [Gamification & Badges Specification](./docs/GAMIFICATION_AND_BADGES.md) — XP economy, 3-star rating mechanics, 5 progression levels, 10 module unlock gates, 16 badges catalog, and celebratory feedback.
 
 ## Project Setup
 
 This is an Expo TypeScript project using:
-- Expo SDK 51
-- React Native 0.74
-- TypeScript
+- Expo SDK 57
+- React Native 0.86 (Hermes Engine & New Architecture)
+- TypeScript 5.x
 - expo-router for file-based routing
 
 ## Dependencies
