@@ -1,0 +1,230 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  Lesson, 
+  Question, 
+  UserProgress, 
+  Achievement,
+  subjects,
+  allModules,
+  sampleLessons,
+  sampleQuestions,
+  initialUserProgress,
+  sampleAchievements
+} from '../data/sampleData';
+
+// Define the context type
+interface LearningContextType {
+  // Data
+  lessons: Lesson[];
+  questions: Record<string, Question[]>; // lessonId -> questions
+  modules: any[]; // Module[]
+  subjects: Subject[];
+  
+  // State
+  currentLesson: Lesson | null;
+  currentQuestionIndex: number;
+  userProgress: UserProgress[];
+  achievements: Achievement[];
+  
+  // Actions
+  setCurrentLesson: (lessonId: string) => void;
+  answerQuestion: (answer: string | number) => void;
+  nextQuestion: () => void;
+  previousQuestion: () => void;
+  markLessonComplete: (score: number) => void;
+  getLessonProgress: (lessonId: string) => UserProgress | undefined;
+  getAchievements: () => Achievement[];
+}
+
+// Create context
+const LearningContext = createContext<LearningContextType | null>(null);
+
+// Custom hook to use the context
+export const useLearning = () => {
+  const context = useContext(LearningContext);
+  if (!context) {
+    throw new Error('useLearning must be used within a LearningProvider');
+  }
+  return context;
+};
+
+// Provider component
+export const LearningProvider = ({ children }: { children: React.ReactNode }) => {
+  // Initialize questions map
+  const [questionsMap, setQuestionsMap] = useState<Record<string, Question[]>>({});
+  const [lessons] = useState<Lesson[]>(sampleLessons);
+  const [modules] = useState<any[]>(allModules);
+  const [subjectsState] = useState<Subject[]>(subjects);
+  const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [userProgress, setUserProgress] = useState<UserProgress[]>(initialUserProgress);
+  const [achievements, setAchievements] = useState<Achievement[]>(sampleAchievements);
+
+  // Initialize questions map on first render
+  useEffect(() => {
+    const map: Record<string, Question[]> = {};
+    sampleQuestions.forEach(question => {
+      if (!map[question.lessonId]) {
+        map[question.lessonId] = [];
+      }
+      map[question.lessonId].push(question);
+    });
+    setQuestionsMap(map);
+  }, []);
+
+  // Get progress for a specific lesson
+  const getLessonProgress = (lessonId: string): UserProgress | undefined => {
+    return userProgress.find(progress => progress.lessonId === lessonId);
+  };
+
+  // Set current lesson
+  const handleSetCurrentLesson = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (lesson) {
+      setCurrentLesson(lesson);
+      setCurrentQuestionIndex(0); // Reset to first question
+    }
+  };
+
+  // Answer a question
+  const handleAnswerQuestion = (answer: string | number) => {
+    if (!currentLesson) return;
+    
+    const lessonQuestions = questionsMap[currentLesson.id] || [];
+    const currentQuestion = lessonQuestions[currentQuestionIndex];
+    
+    if (!currentQuestion) return;
+    
+    // Check if answer is correct
+    let isCorrect = false;
+    if (typeof currentQuestion.correctAnswer === 'number' && typeof answer === 'number') {
+      // For multiple choice where answer is index
+      isCorrect = currentQuestion.correctAnswer === answer;
+    } else if (typeof currentQuestion.correctAnswer === 'string' && typeof answer === 'string') {
+      // For string answers
+      isCorrect = currentQuestion.correctAnswer === answer;
+    }
+    
+    // TODO: Update progress, XP, stars, etc.
+    // For now, just move to next question
+    setCurrentQuestionIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= lessonQuestions.length) {
+        // End of questions - mark lesson complete or loop back
+        return 0; // Loop back to first question for now
+      }
+      return nextIndex;
+    });
+  };
+
+  // Navigate to next question
+  const handleNextQuestion = () => {
+    if (!currentLesson) return;
+    
+    const lessonQuestions = questionsMap[currentLesson.id] || [];
+    setCurrentQuestionIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= lessonQuestions.length) {
+        return 0; // Loop back
+      }
+      return nextIndex;
+    });
+  };
+
+  // Navigate to previous question
+  const handlePreviousQuestion = () => {
+    if (!currentLesson) return;
+    
+    const lessonQuestions = questionsMap[currentLesson.id] || [];
+    setCurrentQuestionIndex(prevIndex => {
+      const prevIndex = prevIndex - 1;
+      if (prevIndex < 0) {
+        return lessonQuestions.length - 1; // Loop to end
+      }
+      return prevIndex;
+    });
+  };
+
+  // Mark lesson as complete
+  const handleMarkLessonComplete = (score: number) => {
+    if (!currentLesson) return;
+    
+    // Calculate stars and XP based on score
+    let starsEarned = 0;
+    let xpEarned = 0;
+    
+    if (score >= 90) {
+      starsEarned = 3;
+      xpEarned = 100;
+    } else if (score >= 70) {
+      starsEarned = 2;
+      xpEarned = 75;
+    } else if (score >= 50) {
+      starsEarned = 1;
+      xpEarned = 50;
+    } else {
+      starsEarned = 0;
+      xpEarned = 25;
+    }
+    
+    // Update or create progress entry
+    const progressIndex = userProgress.findIndex(p => p.lessonId === currentLesson!.id);
+    const newProgress: UserProgress = {
+      userId: 'current-user', // In real app, this would come from auth
+      lessonId: currentLesson!.id,
+      completed: score >= 60, // Pass mark
+      score,
+      starsEarned,
+      xpEarned,
+      lastAttempted: new Date().toISOString(),
+      attempts: (userProgress[progressIndex]?.attempts || 0) + 1
+    };
+    
+    let updatedProgress: UserProgress[];
+    if (progressIndex >= 0) {
+      updatedProgress = [...userProgress];
+      updatedProgress[progressIndex] = newProgress;
+    } else {
+      updatedProgress = [...userProgress, newProgress];
+    }
+    
+    setUserProgress(updatedProgress);
+    
+    // TODO: Check for achievement unlocks
+  };
+
+  // Get achievements
+  const getAchievementsList = () => {
+    return achievements;
+  };
+
+  // Context value
+  const value = {
+    // Data
+    lessons,
+    questions: questionsMap,
+    modules,
+    subjects: subjectsState,
+    
+    // State
+    currentLesson,
+    currentQuestionIndex,
+    userProgress,
+    achievements,
+    
+    // Actions
+    setCurrentLesson: handleSetCurrentLesson,
+    answerQuestion: handleAnswerQuestion,
+    nextQuestion: handleNextQuestion,
+    previousQuestion: handlePreviousQuestion,
+    markLessonComplete: handleMarkLessonComplete,
+    getLessonProgress,
+    getAchievements: getAchievementsList
+  };
+
+  return (
+    <LearningContext.Provider value={value}>
+      {children}
+    </LearningContext.Provider>
+  );
+};

@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip -p \"Learning_With_Fun_MVP1_Project_Plan.docx\" word/document.xml)",
+      "Bash(xxd)",
+      "Bash(npm install *)",
+      "Bash(npx create-expo-app *)",
+      "Bash(C-c *)",
+      "Bash(npm start *)",
+      "Bash(jobs *)",
+      "Bash(timeout 15 bash *)",
+      "Bash(timeout 20 bash *)",
+      "Bash(npx expo *)",
+      "Bash(npx tsc *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8081)",
+      "Bash(taskkill *)",
+      "Bash(kill *)",
+      "Bash(tasklist)",
+      "Bash(findstr 16848)",
+      "Bash(cmd *)",
+      "Bash(echo -n \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYIAAAQYQAAD//wAA//+AAAFD/B0AAAAASUVORK5CYII=\")",
+      "Bash(python -m *)",
+      "Bash(findstr :8090)",
+      "Bash(taskkill.exe *)",
+      "Bash(wmic process *)",
+      "Bash(powershell.exe *)",
+      "Bash(npm list *)",
+      "Bash(findstr :8092)",
+      "Bash(timeout 10 grep *)",
+      "Bash(tee expo_test.log)"
+    ]
+  }
+}
